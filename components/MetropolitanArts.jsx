@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, TextInput, Dimensions } from "react-native";
 import { useState } from "react";
 import { Searchbar, List } from "react-native-paper";
 import { getPagiMetropolitanData } from "../metropolitan-api";
+import MetropolitanArtsCard from "../components/MetropolitanArtsCard";
+import { FlatList } from "react-native";
 
 const MetropolitanArts = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -11,17 +13,10 @@ const MetropolitanArts = () => {
 
   useEffect(() => {
     getPagiMetropolitanData(pageNumber).then((artData) => {
-      console.log(artData);
+      console.log(artData[0].title);
       setArts(artData);
     });
   }, [pageNumber]);
-
-  // useEffect(() => {
-  //   axios
-  //     .get("https://collectionapi.metmuseum.org/public/collection/v1/objects")
-  //     .then((response) => console.log("Axios is working:", response.data))
-  //     .catch((error) => console.error("Axios error:", error));
-  // }, [pageNumber]);
 
   return (
     <View style={styles.container}>
@@ -37,6 +32,11 @@ const MetropolitanArts = () => {
           <List.Item title="Second item" />
         </List.Accordion>
       </List.Section>
+      <FlatList
+        data={arts}
+        keyExtractor={(art) => art.objectID.toString()}
+        renderItem={({ item }) => <MetropolitanArtsCard art={item} />}
+      ></FlatList>
     </View>
   );
 };

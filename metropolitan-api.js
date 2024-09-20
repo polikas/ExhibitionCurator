@@ -26,12 +26,14 @@ const getPagiMetropolitanData = async (page) => {
         console.error(`Error fetching object ID ${id}:`, error.message);
       }
     }
-    console.log(validResults, `<--- Valid art data for page ${page}`);
+    // console.log(validResults, `<--- Valid art data for page ${page}`);
 
     return validResults;
   } catch (error) {
     return [];
   }
 };
+
+//title, artistDisplayName, objectBeginDate, primaryImage or primaryImageSmall
 
 module.exports = { getPagiMetropolitanData };
