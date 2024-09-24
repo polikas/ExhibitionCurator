@@ -1,6 +1,12 @@
-import React, { useEffect } from "react";
-import { StyleSheet, View, Text, TouchableWithoutFeedback } from "react-native";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableWithoutFeedback,
+  Modal,
+  FlatList
+} from "react-native";
 import {
   Searchbar,
   List,
@@ -8,23 +14,46 @@ import {
   ActivityIndicator,
   MD2Colors
 } from "react-native-paper";
-import { getPagiMetropolitanData } from "../metropolitan-api";
+import {
+  getPagiMetropolitanData,
+  getPagiMetropolitanDataByDepartment,
+  getDepartments
+} from "../metropolitan-api";
 import MetropolitanArtsCard from "../components/MetropolitanArtsCard";
-import { FlatList } from "react-native";
 
 const MetropolitanArts = () => {
   const [searchInput, setSearchInput] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const [arts, setArts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [departments, setDepartments] = useState([]);
+  const [showDepartmentMenu, setShowDepartmentMenu] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    getPagiMetropolitanData(pageNumber).then((artData) => {
-      setArts(artData);
+    const fetchArts = async () => {
+      setLoading(true);
+      if (selectedDepartment) {
+        const artData = await getPagiMetropolitanDataByDepartment(
+          pageNumber,
+          selectedDepartment.departmentId
+        );
+        setArts(artData);
+      } else {
+        const artData = await getPagiMetropolitanData(pageNumber);
+        setArts(artData);
+      }
       setLoading(false);
+    };
+
+    fetchArts();
+  }, [pageNumber, selectedDepartment]);
+
+  useEffect(() => {
+    getDepartments().then((deptData) => {
+      setDepartments(deptData.departments);
     });
-  }, [pageNumber]);
+  }, []);
 
   const handleNextPage = () => {
     setPageNumber(pageNumber + 1);
@@ -34,6 +63,16 @@ const MetropolitanArts = () => {
     if (pageNumber > 0) {
       setPageNumber(pageNumber - 1);
     }
+  };
+
+  const handleDepartmentMenu = () => {
+    setShowDepartmentMenu(true);
+  };
+
+  const handleSelectDepartment = (department) => {
+    setSelectedDepartment(department);
+    setShowDepartmentMenu(false);
+    setPageNumber(0);
   };
 
   return (
@@ -48,10 +87,16 @@ const MetropolitanArts = () => {
         />
         <List.Section style={styles.filterBy}>
           <List.Accordion title="Filter By">
-            <List.Item title="Department" />
+            <List.Item title="Department" onPress={handleDepartmentMenu} />
             <List.Item title="Second item" />
           </List.Accordion>
         </List.Section>
+
+        {selectedDepartment && (
+          <Text style={styles.selectedDepartment}>
+            Selected Department: {selectedDepartment.displayName}
+          </Text>
+        )}
 
         {loading ? (
           <ActivityIndicator
@@ -92,6 +137,31 @@ const MetropolitanArts = () => {
             }
           />
         )}
+
+        <Modal visible={showDepartmentMenu} animationType="slide">
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Select a Department</Text>
+            <FlatList
+              data={departments}
+              keyExtractor={(dept) => dept.departmentId.toString()}
+              renderItem={({ item }) => (
+                <Button
+                  mode="outlined"
+                  onPress={() => handleSelectDepartment(item)}
+                  style={styles.departmentButton}
+                >
+                  {item.displayName}
+                </Button>
+              )}
+            />
+            <Button
+              mode="contained"
+              onPress={() => setShowDepartmentMenu(false)}
+            >
+              Close
+            </Button>
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -106,6 +176,11 @@ const styles = StyleSheet.create({
   },
   searchTheCollection: {
     fontSize: 22
+  },
+  selectedDepartment: {
+    fontSize: 18,
+    marginVertical: 10,
+    fontWeight: "bold"
   },
   filterBy: {
     alignSelf: "stretch"
@@ -126,6 +201,20 @@ const styles = StyleSheet.create({
   },
   loadingIndicator: {
     marginTop: 20
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20
+  },
+  modalTitle: {
+    fontSize: 24,
+    marginBottom: 20
+  },
+  departmentButton: {
+    marginVertical: 10,
+    width: "100%"
   }
 });
 
