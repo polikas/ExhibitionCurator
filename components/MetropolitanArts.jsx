@@ -156,6 +156,7 @@ const MetropolitanArts = () => {
             />
             <Button
               mode="contained"
+              style={styles.closeDepartmentBtn}
               onPress={() => setShowDepartmentMenu(false)}
             >
               Close
@@ -192,7 +193,8 @@ const styles = StyleSheet.create({
     marginVertical: 20
   },
   pageButton: {
-    marginHorizontal: 10
+    marginHorizontal: 10,
+    backgroundColor: "darkorange"
   },
   pageNumber: {
     fontSize: 18,
@@ -215,6 +217,9 @@ const styles = StyleSheet.create({
   departmentButton: {
     marginVertical: 10,
     width: "100%"
+  },
+  closeDepartmentBtn: {
+    backgroundColor: "darkorange"
   }
 });
 
