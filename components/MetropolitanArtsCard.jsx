@@ -1,9 +1,21 @@
 import React from "react";
 import { Text, View, Image, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { TouchableOpacity } from "react-native";
 
 const MetropolitanArtsCard = ({ art }) => {
+  const navigation = useNavigation();
+
+  const handlePress = () => {
+    navigation.navigate("SingleMetropolitanArtCard", { art });
+  };
+
   return (
-    <View key={art.objectID} style={styles.card}>
+    <TouchableOpacity
+      onPress={handlePress}
+      key={art.objectID}
+      style={styles.card}
+    >
       {art.primaryImage ? (
         <Image
           source={{ uri: art.primaryImage }}
@@ -16,7 +28,7 @@ const MetropolitanArtsCard = ({ art }) => {
       <Text style={styles.title}>Title: {art.title}</Text>
       <Text>Artist: {art.artistDisplayName}</Text>
       <Text>Date: {art.objectBeginDate}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

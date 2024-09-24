@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MainPage from "./MainPage";
 import MetropolitanArts from "./MetropolitanArts";
+import SingleMetropolitanArtCard from "./SingleMetropolitanArtCard";
 import Title from "./Title";
 
 const Stack = createStackNavigator();
@@ -28,6 +29,11 @@ const App = () => {
           name="MetropolitanArts"
           component={MetropolitanArts}
           options={{ title: "Metropolitan Arts" }}
+        />
+        <Stack.Screen
+          name="SingleMetropolitanArtCard"
+          component={SingleMetropolitanArtCard}
+          options={{ title: "Artwork Details" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// Display 40 metropolitan arts for main page of metropolitan, apply pagination
 const getPagiMetropolitanData = async (page) => {
   try {
     const objectsPerPage = 40; // Number of objects per page
@@ -37,6 +38,19 @@ const getPagiMetropolitanData = async (page) => {
     return validResults;
   } catch (error) {
     return [];
+  }
+};
+
+// Function to get details for each object ID individually
+// Function to get details for each object ID individually
+const getSingleArtData = async (id) => {
+  try {
+    const response = await axios.get(
+      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching details for object ID ${id}:`, error.message);
   }
 };
 
