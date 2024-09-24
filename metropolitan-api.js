@@ -41,19 +41,6 @@ const getPagiMetropolitanData = async (page) => {
   }
 };
 
-// Function to get details for each object ID individually
-// Function to get details for each object ID individually
-const getSingleArtData = async (id) => {
-  try {
-    const response = await axios.get(
-      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error(`Error fetching details for object ID ${id}:`, error.message);
-  }
-};
-
 //title, artistDisplayName, objectBeginDate, primaryImage or primaryImageSmall
 
 module.exports = { getPagiMetropolitanData };
