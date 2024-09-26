@@ -87,7 +87,7 @@ const getPagiMetropolitanDataByDepartment = async (page, departmentId) => {
           titleSet.add(artResponse.data.title);
         }
       } catch (error) {
-        throw new Error(`Error fetching object ID ${id}: ${error.message}`);
+        console.log(`Error fetching object ID ${id}: ${error.message}`);
       }
     }
 

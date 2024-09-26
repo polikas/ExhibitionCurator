@@ -66,7 +66,6 @@ describe("getDepartments()", () => {
       .reply(200, mockDepartments);
 
     const result = await getDepartments();
-    console.log(result.departments);
 
     expect(result.departments).toHaveLength(5);
     expect(result.departments[0]).toEqual({
@@ -86,7 +85,7 @@ describe("getDepartments()", () => {
     try {
       await getDepartments();
     } catch (error) {
-      expect(error.response.status).toBe(500);
+      expect(error.message).toContain("Error fetching departments");
     }
   });
 });
