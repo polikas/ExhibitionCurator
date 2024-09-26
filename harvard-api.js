@@ -1,14 +1,15 @@
 import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const getHarvardArts = async (page) => {
   const validResults = [];
   try {
-    // Fetch 4000 records from the API, use the page parameter
     const harvardArtResponse = await axios.get(
-      `https://api.harvardartmuseums.org/object?size=4000&page=${page}&apikey=b5b7cabe-d309-41c5-8d1c-55747afac2d7`
+      `https://api.harvardartmuseums.org/object?size=4000&page=${page}&apikey=${process.env.API_KEY}`
     );
 
-    // Filter for valid records
     for (const object of harvardArtResponse.data.records) {
       if (object.primaryimageurl != null) {
         validResults.push(object);
