@@ -3,7 +3,8 @@ const axiosMockAdapter = require("axios-mock-adapter");
 const {
   getPagiMetropolitanData,
   getDepartments,
-  getPagiMetropolitanDataByDepartment
+  getPagiMetropolitanDataByDepartment,
+  getArtsSearchQuery
 } = require("../metropolitan-api");
 
 const mock = new axiosMockAdapter(axios);
@@ -163,5 +164,114 @@ describe("getPagiMetropolitanDataByDepartment()", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].title).toBe("Art Title 1");
+  });
+});
+describe("getArtsSearchQuery()", () => {
+  beforeEach(() => {
+    mock.reset();
+  });
+
+  it("should return 5 art records and ensure uniqueness by title", async () => {
+    const searchQuery = "monet";
+    const page = 0;
+    const objectsPerPage = 40;
+
+    const mockObjectIDs = Array.from({ length: 5 }, (_, i) => i + 1);
+    mock
+      .onGet(
+        `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${searchQuery}`
+      )
+      .reply(200, { objectIDs: mockObjectIDs });
+
+    const mockArtData = mockObjectIDs.map((id) => ({
+      objectID: id,
+      isPublicDomain: true,
+      title: `Art Title ${id}`
+    }));
+
+    mockObjectIDs.forEach((id) => {
+      mock
+        .onGet(
+          `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
+        )
+        .reply(200, mockArtData[id - 1]);
+    });
+
+    const result = await getArtsSearchQuery(searchQuery, page);
+
+    expect(result).toHaveLength(5);
+    expect(result).toEqual(mockArtData);
+  });
+
+  it("should handle pagination and return the correct records", async () => {
+    const searchQuery = "monet";
+    const page = 1;
+    const objectsPerPage = 40;
+
+    const mockObjectIDs = Array.from({ length: 100 }, (_, i) => i + 1);
+    mock
+      .onGet(
+        `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${searchQuery}`
+      )
+      .reply(200, { objectIDs: mockObjectIDs });
+
+    const mockArtData = mockObjectIDs.slice(40, 80).map((id) => ({
+      objectID: id,
+      isPublicDomain: true,
+      title: `Art Title ${id}`
+    }));
+
+    mockArtData.forEach((art) => {
+      mock
+        .onGet(
+          `https://collectionapi.metmuseum.org/public/collection/v1/objects/${art.objectID}`
+        )
+        .reply(200, art);
+    });
+
+    const result = await getArtsSearchQuery(searchQuery, page);
+
+    expect(result).toHaveLength(objectsPerPage);
+    expect(result).toEqual(mockArtData);
+  });
+
+  it("should skip records that are not public domain or have duplicate titles", async () => {
+    const searchQuery = "monet";
+    const page = 0;
+
+    const mockObjectIDs = Array.from({ length: 5 }, (_, i) => i + 1);
+    mock
+      .onGet(
+        `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${searchQuery}`
+      )
+      .reply(200, { objectIDs: mockObjectIDs });
+
+    const mockArtData = [
+      { objectID: 1, isPublicDomain: true, title: "Art Title 1" },
+      { objectID: 2, isPublicDomain: false, title: "Art Title 2" },
+      { objectID: 3, isPublicDomain: true, title: "Art Title 1" },
+      { objectID: 4, isPublicDomain: true, title: "Art Title 4" },
+      { objectID: 5, isPublicDomain: true, title: "Art Title 5" }
+    ];
+
+    mockArtData.forEach((art) => {
+      mock
+        .onGet(
+          `https://collectionapi.metmuseum.org/public/collection/v1/objects/${art.objectID}`
+        )
+        .reply(200, art);
+    });
+
+    const result = await getArtsSearchQuery(searchQuery, page);
+
+    // Expect only 3 valid results (objectID 1, 4, 5)
+    const expectedValidResults = mockArtData.filter(
+      (art, index, self) =>
+        art.isPublicDomain &&
+        self.findIndex((a) => a.title === art.title) === index
+    );
+
+    expect(result).toHaveLength(3);
+    expect(result).toEqual(expectedValidResults);
   });
 });

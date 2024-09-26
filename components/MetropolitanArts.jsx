@@ -17,7 +17,8 @@ import {
 import {
   getPagiMetropolitanData,
   getPagiMetropolitanDataByDepartment,
-  getDepartments
+  getDepartments,
+  getArtsSearchQuery
 } from "../metropolitan-api";
 import MetropolitanArtsCard from "../components/MetropolitanArtsCard";
 

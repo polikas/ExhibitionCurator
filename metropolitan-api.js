@@ -105,10 +105,60 @@ const getPagiMetropolitanDataByDepartment = async (page, departmentId) => {
   }
 };
 
+const getArtsSearchQuery = async (search, page) => {
+  try {
+    const objectsPerPage = 40;
+    // Step 1: Fetch object IDs based on the search keyword
+    const response = await axios.get(
+      `https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${search}`
+    );
+    const objectIDs = response.data.objectIDs || [];
+
+    // Calculate the start and end index based on the page number and items per page
+    const startIndex = page * objectsPerPage;
+    const endIndex = startIndex + objectsPerPage;
+    const objectIDsForPage = objectIDs.slice(startIndex, endIndex);
+
+    // Step 2: Fetch details for each object ID
+    const validResults = [];
+    const titleSet = new Set();
+    for (const id of objectIDsForPage) {
+      try {
+        const artResponse = await axios.get(
+          `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
+        );
+        if (
+          artResponse.data &&
+          artResponse.data.isPublicDomain === true &&
+          !titleSet.has(artResponse.data.title)
+        ) {
+          validResults.push(artResponse.data); // Add only valid results
+          titleSet.add(artResponse.data.title);
+        }
+      } catch (error) {
+        console.error(`Error fetching object ID ${id}:`, error.message);
+        // Skip invalid or error-prone objects
+      }
+    }
+
+    console.log(
+      validResults,
+      `<--- Valid art data for search '${search}' on page ${page}`
+    );
+
+    // Return only valid results to avoid any front-end issues
+    console.log(validResults.length, "<==== length of valid records");
+    return validResults;
+  } catch (error) {
+    console.error("Error in getArtsSearchQuery:", error);
+  }
+};
+
 //title, artistDisplayName, objectBeginDate, primaryImage or primaryImageSmall
 
 module.exports = {
   getPagiMetropolitanData,
   getDepartments,
-  getPagiMetropolitanDataByDepartment
+  getPagiMetropolitanDataByDepartment,
+  getArtsSearchQuery
 };
