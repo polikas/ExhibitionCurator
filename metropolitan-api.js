@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// Display 40 metropolitan arts for main page of metropolitan, apply pagination
+// Display 40 metropolitan arts for the main page of metropolitan, apply pagination
 const getPagiMetropolitanData = async (page) => {
   try {
     const objectsPerPage = 40; // Number of objects per page
@@ -30,18 +30,19 @@ const getPagiMetropolitanData = async (page) => {
           titleSet.add(artResponse.data.title);
         }
       } catch (error) {
-        console.error(`Error fetching object ID ${id}:`, error.message);
+        throw new Error(`Error fetching object ID ${id}: ${error.message}`);
       }
     }
-    //console.log(validResults, `<--- Valid art data for page ${page}`);
 
     return validResults;
   } catch (error) {
-    return [];
+    throw new Error(
+      `Error fetching paginated metropolitan data: ${error.message}`
+    );
   }
 };
 
-// Get a list of all the departmentds, Get the departmentId and displayName
+// Get a list of all departments, Get the departmentId and displayName
 const getDepartments = async () => {
   try {
     const response = await axios.get(
@@ -49,7 +50,7 @@ const getDepartments = async () => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
+    throw new Error(`Error fetching departments: ${error.message}`);
   }
 };
 
@@ -86,22 +87,15 @@ const getPagiMetropolitanDataByDepartment = async (page, departmentId) => {
           titleSet.add(artResponse.data.title);
         }
       } catch (error) {
-        console.error(`Error fetching object ID ${id}:`, error.message);
+        throw new Error(`Error fetching object ID ${id}: ${error.message}`);
       }
     }
 
-    // console.log(
-    //   validResults,
-    //   `<--- Valid art data for department ${departmentId}, page ${page}`
-    // );
-
     return validResults;
   } catch (error) {
-    console.error(
-      `Error fetching object IDs for department ${departmentId}:`,
-      error.message
+    throw new Error(
+      `Error fetching object IDs for department ${departmentId}: ${error.message}`
     );
-    return [];
   }
 };
 
@@ -136,25 +130,15 @@ const getArtsSearchQuery = async (search, page) => {
           titleSet.add(artResponse.data.title);
         }
       } catch (error) {
-        console.error(`Error fetching object ID ${id}:`, error.message);
-        // Skip invalid or error-prone objects
+        throw new Error(`Error fetching object ID ${id}: ${error.message}`);
       }
     }
 
-    console.log(
-      validResults,
-      `<--- Valid art data for search '${search}' on page ${page}`
-    );
-
-    // Return only valid results to avoid any front-end issues
-    console.log(validResults.length, "<==== length of valid records");
     return validResults;
   } catch (error) {
-    console.error("Error in getArtsSearchQuery:", error);
+    throw new Error(`Error in getArtsSearchQuery: ${error.message}`);
   }
 };
-
-//title, artistDisplayName, objectBeginDate, primaryImage or primaryImageSmall
 
 module.exports = {
   getPagiMetropolitanData,

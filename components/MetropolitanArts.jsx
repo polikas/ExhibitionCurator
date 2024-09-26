@@ -30,25 +30,38 @@ const MetropolitanArts = () => {
   const [departments, setDepartments] = useState([]);
   const [showDepartmentMenu, setShowDepartmentMenu] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchArts = async () => {
-      setLoading(true);
+  const fetchArts = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      let artData;
       if (selectedDepartment) {
-        const artData = await getPagiMetropolitanDataByDepartment(
+        artData = await getPagiMetropolitanDataByDepartment(
           pageNumber,
           selectedDepartment.departmentId
         );
-        setArts(artData);
       } else {
-        const artData = await getPagiMetropolitanData(pageNumber);
-        setArts(artData);
+        artData = await getPagiMetropolitanData(pageNumber);
       }
+      setArts(artData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchArts();
   }, [pageNumber, selectedDepartment]);
+
+  useEffect(() => {
+    if (searchInput) {
+      setSelectedDepartment(null);
+    }
+  }, [searchInput]);
 
   useEffect(() => {
     getDepartments().then((deptData) => {
@@ -74,6 +87,23 @@ const MetropolitanArts = () => {
     setSelectedDepartment(department);
     setShowDepartmentMenu(false);
     setPageNumber(0);
+    setSearchInput("");
+  };
+
+  const handleSearchIconPress = async () => {
+    if (!searchInput.trim()) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const searchResults = await getArtsSearchQuery(searchInput, pageNumber);
+      setArts(searchResults);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -84,16 +114,17 @@ const MetropolitanArts = () => {
           placeholder="Search"
           onChangeText={setSearchInput}
           value={searchInput}
+          onIconPress={handleSearchIconPress}
+          onSubmitEditing={handleSearchIconPress}
           disabled={loading}
         />
         <List.Section style={styles.filterBy}>
           <List.Accordion title="Filter By">
             <List.Item title="Department" onPress={handleDepartmentMenu} />
-            <List.Item title="Second item" />
           </List.Accordion>
         </List.Section>
 
-        {selectedDepartment && (
+        {selectedDepartment && !searchInput && (
           <Text style={styles.selectedDepartment}>
             Selected Department: {selectedDepartment.displayName}
           </Text>
