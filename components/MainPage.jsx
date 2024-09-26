@@ -21,7 +21,7 @@ const MainPage = ({ navigation }) => {
         <Text style={styles.metroText}>Metropolitan Art</Text>
       </Pressable>
       <Pressable
-        onPress={() => Alert.alert("hello Harvard")}
+        onPress={() => navigation.navigate("HarvardArts")}
         style={styles.harvardButton}
       >
         <Text style={styles.harvardText}>Harvard Art</Text>

@@ -1,9 +1,6 @@
 const axios = require("axios");
 const axiosMockAdapter = require("axios-mock-adapter");
 const { getHarvardArts } = require("../harvard-api");
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const mock = new axiosMockAdapter(axios);
 
@@ -11,10 +8,11 @@ describe("getHarvardArts()", () => {
   beforeEach(() => {
     mock.reset();
   });
+
   it("should throw an error if the API call fails", async () => {
     mock
       .onGet(
-        `https://api.harvardartmuseums.org/object?size=4000&page=1&apikey=${process.env.API_KEY}`
+        `https://api.harvardartmuseums.org/object?size=4000&page=1&apikey=b5b7cabe-d309-41c5-8d1c-55747afac2d7`
       )
       .reply(500);
 
@@ -22,6 +20,7 @@ describe("getHarvardArts()", () => {
       "Error fetching data: Request failed with status code 500"
     );
   });
+
   it("should return objects with non-null primaryimageurl", async () => {
     const mockData = {
       records: [
@@ -33,7 +32,7 @@ describe("getHarvardArts()", () => {
 
     mock
       .onGet(
-        `https://api.harvardartmuseums.org/object?size=4000&page=1&apikey=${process.env.API_KEY}`
+        `https://api.harvardartmuseums.org/object?size=4000&page=1&apikey=b5b7cabe-d309-41c5-8d1c-55747afac2d7`
       )
       .reply(200, mockData);
 
