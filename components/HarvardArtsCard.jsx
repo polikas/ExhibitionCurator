@@ -22,8 +22,9 @@ const HarvardArtsCard = ({ art }) => {
         <Text style={styles.noImageText}>No Image Available</Text>
       )}
       <Text style={styles.title}>Title: {art.title}</Text>
-      {/* <Text>Artist: {art.artistDisplayName}</Text>
-      <Text>Date: {art.objectBeginDate}</Text> */}
+      <Text>Object Number: {art.objectnumber} </Text>
+      <Text>People: {art.people?.[0]?.displayname || "Uknown"}</Text>
+      <Text>Classification: {art.classification}</Text>
     </TouchableOpacity>
   );
 };

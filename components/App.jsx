@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import MainPage from "./MainPage";
 import MetropolitanArts from "./MetropolitanArts";
 import HarvardArts from "./HarvardArts";
+import SingleHarvardArtCard from "./SingleHarvardArtCard";
 import SingleMetropolitanArtCard from "./SingleMetropolitanArtCard";
 import Title from "./Title";
 
@@ -40,6 +41,11 @@ const App = () => {
           name="HarvardArts"
           component={HarvardArts}
           options={{ title: "Harvard Arts" }}
+        />
+        <Stack.Screen
+          name="SingleHarvardArtCard"
+          component={SingleHarvardArtCard}
+          options={{ title: "Artwork Details" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
