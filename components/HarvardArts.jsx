@@ -15,16 +15,20 @@ import {
   MD2Colors
 } from "react-native-paper";
 import HarvardArtsCard from "../components/HarvardArtsCard";
-import { getHarvardArts } from "../harvard-api";
+import {
+  getHarvardArts,
+  getHarvardClassifications,
+  getHarvardDataByClassification
+} from "../harvard-api";
 
 const HarvardArts = () => {
   const [searchInput, setSearchInput] = useState("");
-  const [pageNumber, setPageNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
   const [arts, setArts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [departments, setDepartments] = useState([]);
-  const [showDepartmentMenu, setShowDepartmentMenu] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] = useState(null);
+  const [classifications, setClassifications] = useState([]);
+  const [showClassificationMenu, setShowClassificationMenu] = useState(false);
+  const [selectedClassification, setSelectedClassification] = useState(null);
   const [error, setError] = useState("");
 
   const fetchArts = async () => {
@@ -32,7 +36,14 @@ const HarvardArts = () => {
     setError("");
     try {
       let artData;
-      artData = await getHarvardArts(pageNumber);
+      if (selectedClassification) {
+        artData = await getHarvardDataByClassification(
+          pageNumber,
+          selectedClassification.id
+        );
+      } else {
+        artData = await getHarvardArts(pageNumber);
+      }
       setArts(artData);
     } catch (err) {
       setError(err.message);
@@ -43,20 +54,33 @@ const HarvardArts = () => {
 
   useEffect(() => {
     fetchArts();
-  }, [pageNumber]);
+  }, [pageNumber, selectedClassification]);
+
+  useEffect(() => {
+    getHarvardClassifications().then((classificationData) => {
+      setClassifications(classificationData);
+    });
+  });
 
   const handleNextPage = () => {
     setPageNumber(pageNumber + 1);
   };
 
   const handlePreviousPage = () => {
-    if (pageNumber > 0) {
+    if (pageNumber > 1) {
       setPageNumber(pageNumber - 1);
     }
   };
 
-  const handleDepartmentMenu = () => {
-    console.log("Harvard Department");
+  const handleClassificationMenu = () => {
+    setShowClassificationMenu(true);
+  };
+
+  const handleSelectClassification = (classification) => {
+    setSelectedClassification(classification);
+    setShowClassificationMenu(false);
+    setPageNumber(1);
+    setSearchInput("");
   };
 
   return (
@@ -71,15 +95,18 @@ const HarvardArts = () => {
         />
         <List.Section style={styles.filterBy}>
           <List.Accordion title="Filter By">
-            <List.Item title="Department" onPress={handleDepartmentMenu} />
+            <List.Item
+              title="Classification"
+              onPress={handleClassificationMenu}
+            />
           </List.Accordion>
         </List.Section>
 
-        {/* {selectedDepartment && !searchInput && (
-          <Text style={styles.selectedDepartment}>
-            Selected Department: {selectedDepartment.displayName}
+        {selectedClassification && !searchInput && (
+          <Text style={styles.selectedClassification}>
+            Selected Classification: {selectedClassification.name}
           </Text>
-        )} */}
+        )}
 
         {loading ? (
           <ActivityIndicator
@@ -95,7 +122,7 @@ const HarvardArts = () => {
             renderItem={({ item }) => <HarvardArtsCard art={item} />}
             ListFooterComponent={
               <View style={styles.paginationContainer}>
-                {pageNumber > 0 && (
+                {pageNumber > 1 && (
                   <Button
                     icon="page-previous"
                     mode="contained"
@@ -121,31 +148,31 @@ const HarvardArts = () => {
           />
         )}
 
-        {/* <Modal visible={showDepartmentMenu} animationType="slide">
+        <Modal visible={showClassificationMenu} animationType="slide">
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Select a Department</Text>
+            <Text style={styles.modalTitle}>Select a Classification</Text>
             <FlatList
-              data={departments}
-              keyExtractor={(dept) => dept.departmentId.toString()}
+              data={classifications}
+              keyExtractor={(classification) => classification.id.toString()}
               renderItem={({ item }) => (
                 <Button
                   mode="outlined"
-                  onPress={() => handleSelectDepartment(item)}
-                  style={styles.departmentButton}
+                  onPress={() => handleSelectClassification(item)}
+                  style={styles.classificationButton}
                 >
-                  {item.displayName}
+                  {item.name}
                 </Button>
               )}
             />
             <Button
               mode="contained"
-              style={styles.closeDepartmentBtn}
-              onPress={() => setShowDepartmentMenu(false)}
+              style={styles.closeClassificationBtn}
+              onPress={() => setShowClassificationMenu(false)}
             >
               Close
             </Button>
           </View>
-        </Modal> */}
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -197,11 +224,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20
   },
-  departmentButton: {
+  classificationButton: {
     marginVertical: 10,
     width: "100%"
   },
-  closeDepartmentBtn: {
+  closeClassificationBtn: {
     backgroundColor: "darkorange"
   }
 });
