@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
+import { Button, Snackbar } from "react-native-paper";
+import { ArtCollectionContext } from "../contexts/ArtCollectionContext";
 
 const SingleMetropolitanArtCard = ({ route }) => {
   const { art } = route.params;
+  const { collection, addToCollection } = useContext(ArtCollectionContext);
 
+  const [isSnackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+
+  const handleAddToCollection = () => {
+    const artExists = collection.some((item) => item.objectID === art.objectID);
+
+    if (artExists) {
+      setSnackbarMessage("Art is already in the collection!");
+    } else {
+      addToCollection(art);
+      setSnackbarMessage("Art saved to collection!");
+    }
+
+    setSnackbarVisible(true);
+  };
   return (
     <View style={styles.container}>
       {art.primaryImage ? (
@@ -15,6 +33,14 @@ const SingleMetropolitanArtCard = ({ route }) => {
       ) : (
         <Text style={styles.noImageText}>No Image Available</Text>
       )}
+
+      <Button
+        mode="contained"
+        style={styles.addToCollectionBtn}
+        onPress={handleAddToCollection}
+      >
+        Add to Collection
+      </Button>
 
       <Text>
         <Text style={{ fontWeight: "bold" }}>Title: </Text>
@@ -70,6 +96,15 @@ const SingleMetropolitanArtCard = ({ route }) => {
         <Text style={{ fontWeight: "bold" }}>Rights and Reproduction: </Text>
         {art.rightsAndReproduction}
       </Text>
+
+      <Snackbar
+        visible={isSnackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={2000}
+        style={styles.snackbar}
+      >
+        {snackbarMessage}
+      </Snackbar>
     </View>
   );
 };
@@ -88,6 +123,13 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     textAlign: "center",
     marginBottom: 10
+  },
+  addToCollectionBtn: {
+    backgroundColor: "darkorange",
+    marginVertical: 10
+  },
+  snackbar: {
+    backgroundColor: "green"
   }
 });
 

@@ -6,49 +6,58 @@ import MetropolitanArts from "./MetropolitanArts";
 import HarvardArts from "./HarvardArts";
 import SingleHarvardArtCard from "./SingleHarvardArtCard";
 import SingleMetropolitanArtCard from "./SingleMetropolitanArtCard";
+import ArtsCollection from "./ArtsCollection";
 import Title from "./Title";
+import { ArtCollectionProvider } from "../contexts/ArtCollectionContext";
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerTitle: (props) => <Title {...props} />,
-          headerTitleAlign: "center", // Center the title
-          headerStyle: {
-            backgroundColor: "darkorange"
-          }
-        }}
-      >
-        <Stack.Screen
-          name="MainPage"
-          component={MainPage}
-          options={{ title: "Exhibition Curator Arts" }}
-        />
-        <Stack.Screen
-          name="MetropolitanArts"
-          component={MetropolitanArts}
-          options={{ title: "Metropolitan Arts" }}
-        />
-        <Stack.Screen
-          name="SingleMetropolitanArtCard"
-          component={SingleMetropolitanArtCard}
-          options={{ title: "Artwork Details" }}
-        />
-        <Stack.Screen
-          name="HarvardArts"
-          component={HarvardArts}
-          options={{ title: "Harvard Arts" }}
-        />
-        <Stack.Screen
-          name="SingleHarvardArtCard"
-          component={SingleHarvardArtCard}
-          options={{ title: "Artwork Details" }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ArtCollectionProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerTitle: (props) => <Title {...props} />,
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: "darkorange"
+            }
+          }}
+        >
+          <Stack.Screen
+            name="MainPage"
+            component={MainPage}
+            options={{ title: "Exhibition Curator Arts" }}
+          />
+          <Stack.Screen
+            name="MetropolitanArts"
+            component={MetropolitanArts}
+            options={{ title: "Metropolitan Arts" }}
+          />
+          <Stack.Screen
+            name="SingleMetropolitanArtCard"
+            component={SingleMetropolitanArtCard}
+            options={{ title: "Artwork Details" }}
+          />
+          <Stack.Screen
+            name="HarvardArts"
+            component={HarvardArts}
+            options={{ title: "Harvard Arts" }}
+          />
+          <Stack.Screen
+            name="SingleHarvardArtCard"
+            component={SingleHarvardArtCard}
+            options={{ title: "Artwork Details" }}
+          />
+          <Stack.Screen
+            name="ArtsCollection"
+            component={ArtsCollection}
+            options={{ title: "My Collection" }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ArtCollectionProvider>
   );
 };
 
