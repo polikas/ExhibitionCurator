@@ -3,7 +3,8 @@ const axiosMockAdapter = require("axios-mock-adapter");
 const {
   getHarvardArts,
   getHarvardClassifications,
-  getHarvardDataByClassification
+  getHarvardDataByClassification,
+  getHarvardArtsSearchQuery
 } = require("../harvard-api");
 
 const mock = new axiosMockAdapter(axios);
@@ -133,6 +134,47 @@ describe("getHarvardDataByClassification()", () => {
       getHarvardDataByClassification(page, classificationId)
     ).rejects.toThrow(
       `Error fetching object IDs for classification ${classificationId}: Request failed with status code 500`
+    );
+  });
+});
+describe("getHarvardArtsSearchQuery()", () => {
+  beforeEach(() => {
+    mock.reset();
+  });
+
+  it("should return valid results when user search inputs with keyword (in this case we just test with title one of the cases), however a keyword search string; this parameter searches object titles, artists, description, classification, culture, worktype, medium terms, provenance, and creditline", async () => {
+    const searchInput = "bike";
+    const page = 1;
+
+    const mockData = {
+      records: [
+        { id: 1, title: searchInput },
+        { id: 2, title: searchInput }
+      ]
+    };
+
+    mock
+      .onGet(
+        `https://api.harvardartmuseums.org/object?keyword=${searchInput}&size=50&&page=${page}&apikey=b5b7cabe-d309-41c5-8d1c-55747afac2d7`
+      )
+      .reply(200, mockData);
+
+    const result = await getHarvardArtsSearchQuery(searchInput, page);
+    expect(result).toEqual(mockData.records);
+  });
+
+  it("should handle errors when the API call fails", async () => {
+    const searchInput = "boat";
+    const page = 1;
+
+    mock
+      .onGet(
+        `https://api.harvardartmuseums.org/object?keyword=${searchInput}&size=50&&page=${page}&apikey=b5b7cabe-d309-41c5-8d1c-55747afac2d7`
+      )
+      .reply(500);
+
+    await expect(getHarvardArtsSearchQuery(searchInput, page)).rejects.toThrow(
+      `Error fetching object IDs for keyword ${searchInput}: Request failed with status code 500`
     );
   });
 });

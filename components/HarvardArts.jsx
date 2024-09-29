@@ -18,7 +18,8 @@ import HarvardArtsCard from "../components/HarvardArtsCard";
 import {
   getHarvardArts,
   getHarvardClassifications,
-  getHarvardDataByClassification
+  getHarvardDataByClassification,
+  getHarvardArtsSearchQuery
 } from "../harvard-api";
 
 const HarvardArts = () => {
@@ -57,10 +58,16 @@ const HarvardArts = () => {
   }, [pageNumber, selectedClassification]);
 
   useEffect(() => {
+    if (searchInput) {
+      setSelectedClassification(null);
+    }
+  }, [searchInput]);
+
+  useEffect(() => {
     getHarvardClassifications().then((classificationData) => {
       setClassifications(classificationData);
     });
-  });
+  }, []);
 
   const handleNextPage = () => {
     setPageNumber(pageNumber + 1);
@@ -83,6 +90,25 @@ const HarvardArts = () => {
     setSearchInput("");
   };
 
+  const handleSearchIconPress = async () => {
+    if (!searchInput.trim()) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const searchResults = await getHarvardArtsSearchQuery(
+        searchInput,
+        pageNumber
+      );
+      setArts(searchResults);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <TouchableWithoutFeedback disabled={loading}>
       <View style={styles.container} pointerEvents={loading ? "none" : "auto"}>
@@ -91,6 +117,8 @@ const HarvardArts = () => {
           placeholder="Search"
           onChangeText={setSearchInput}
           value={searchInput}
+          onIconPress={handleSearchIconPress}
+          onSubmitEditing={handleSearchIconPress}
           disabled={loading}
         />
         <List.Section style={styles.filterBy}>

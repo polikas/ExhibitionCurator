@@ -56,8 +56,28 @@ const getHarvardDataByClassification = async (page, classificationId) => {
   }
 };
 
+const getHarvardArtsSearchQuery = async (searchInput, page) => {
+  const validResults = [];
+  try {
+    const response = await axios.get(
+      `https://api.harvardartmuseums.org/object?keyword=${searchInput}&size=50&&page=${page}&apikey=b5b7cabe-d309-41c5-8d1c-55747afac2d7`
+    );
+    for (const object of response.data.records) {
+      if (object.id != null) {
+        validResults.push(object);
+      }
+    }
+    return validResults;
+  } catch (error) {
+    throw new Error(
+      `Error fetching object IDs for keyword ${searchInput}: ${error.message}`
+    );
+  }
+};
+
 module.exports = {
   getHarvardArts,
   getHarvardClassifications,
-  getHarvardDataByClassification
+  getHarvardDataByClassification,
+  getHarvardArtsSearchQuery
 };
