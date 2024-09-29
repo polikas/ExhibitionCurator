@@ -28,7 +28,7 @@ const App = () => {
           <Stack.Screen
             name="MainPage"
             component={MainPage}
-            options={{ title: "Exhibition Curator Arts" }}
+            options={{ title: "Create Your Exhibition" }}
           />
           <Stack.Screen
             name="MetropolitanArts"

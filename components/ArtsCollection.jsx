@@ -1,17 +1,37 @@
 import React, { useContext, useState } from "react";
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  StyleSheet,
+  TouchableOpacity
+} from "react-native";
 import { ArtCollectionContext } from "../contexts/ArtCollectionContext";
 import { Button, Snackbar } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
 
 const ArtsCollection = () => {
   const { collection, removeFromCollection } = useContext(ArtCollectionContext);
   const [isSnackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const navigation = useNavigation();
 
   const handleRemoveFromCollection = (art) => {
     removeFromCollection(art);
     setSnackbarMessage("Art removed from collection!");
     setSnackbarVisible(true);
+  };
+
+  const handlePress = (art) => {
+    const isHarvardArt = art.id !== undefined;
+    const isMetropolitanArt = art.objectID !== undefined;
+
+    if (isHarvardArt) {
+      navigation.navigate("SingleHarvardArtCard", { art });
+    } else if (isMetropolitanArt) {
+      navigation.navigate("SingleMetropolitanArtCard", { art });
+    }
   };
 
   return (
@@ -24,27 +44,34 @@ const ArtsCollection = () => {
           }
           renderItem={({ item }) => (
             <View style={styles.artItem}>
-              {item.primaryimageurl ? (
-                <Image
-                  source={{ uri: item.primaryimageurl }}
-                  style={styles.image}
-                  resizeMode="contain"
-                />
-              ) : item.primaryImage ? (
-                <Image
-                  source={{ uri: item.primaryImage }}
-                  style={styles.image}
-                  resizeMode="contain"
-                />
-              ) : (
-                <Text style={styles.noImageText}>No Image Available</Text>
-              )}
+              <TouchableOpacity
+                onPress={() => handlePress(item)}
+                style={styles.touchable}
+              >
+                {item.primaryimageurl ? (
+                  <Image
+                    source={{ uri: item.primaryimageurl }}
+                    style={styles.image}
+                    resizeMode="contain"
+                  />
+                ) : item.primaryImage ? (
+                  <Image
+                    source={{ uri: item.primaryImage }}
+                    style={styles.image}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <Text style={styles.noImageText}>No Image Available</Text>
+                )}
 
-              <Text style={styles.sourceText}>
-                {item.primaryimageurl ? "By Harvard" : "By Metropolitan"}
-              </Text>
+                <Text style={styles.sourceText}>
+                  {item.primaryimageurl
+                    ? "By Harvard Museum"
+                    : "By Metropolitan Museum"}
+                </Text>
 
-              <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.title}>{item.title}</Text>
+              </TouchableOpacity>
 
               <Button
                 mode="contained"
@@ -128,6 +155,9 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     backgroundColor: "green"
+  },
+  touchable: {
+    padding: 10
   }
 });
 

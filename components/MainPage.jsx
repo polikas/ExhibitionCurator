@@ -16,23 +16,32 @@ const MainPage = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <Pressable
         onPress={() => navigation.navigate("MetropolitanArts")}
-        style={styles.metroButton}
+        style={({ pressed }) => [
+          styles.metroButton,
+          pressed && styles.buttonPressed
+        ]}
       >
-        <Text style={styles.metroText}>Metropolitan Art</Text>
+        <Text style={styles.metroText}>Discover Metropolitan Arts</Text>
       </Pressable>
 
       <Pressable
         onPress={() => navigation.navigate("HarvardArts")}
-        style={styles.harvardButton}
+        style={({ pressed }) => [
+          styles.harvardButton,
+          pressed && styles.buttonPressed
+        ]}
       >
-        <Text style={styles.harvardText}>Harvard Art</Text>
+        <Text style={styles.harvardText}>Discover Harvard Art</Text>
       </Pressable>
 
       <Pressable
         onPress={() => navigation.navigate("ArtsCollection")}
-        style={styles.collectionBtn}
+        style={({ pressed }) => [
+          styles.collectionBtn,
+          pressed && styles.buttonPressed
+        ]}
       >
-        <Text style={styles.collectionText}>View Collection</Text>
+        <Text style={styles.collectionText}>View My Collection</Text>
       </Pressable>
     </ScrollView>
   );
@@ -52,7 +61,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 10,
-    marginBottom: 20
+    marginBottom: 20,
+    borderRadius: 15,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    transition: "all 0.3s ease"
   },
   harvardButton: {
     width: screenWidth * 0.8,
@@ -61,28 +77,49 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 10,
-    marginBottom: 20
-  },
-  metroText: {
-    fontSize: 20,
-    textAlign: "center"
-  },
-  harvardText: {
-    fontSize: 20,
-    textAlign: "center"
+    marginBottom: 20,
+    borderRadius: 15,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4
   },
   collectionBtn: {
     width: screenWidth * 0.8,
     height: screenHeight * 0.3,
-    backgroundColor: "skyblue",
+    backgroundColor: "lightcoral",
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: 10,
-    marginBottom: 20
+    marginBottom: 20,
+    borderRadius: 15,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4
+  },
+  metroText: {
+    fontSize: 20,
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "#fff"
+  },
+  harvardText: {
+    fontSize: 20,
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "#fff"
   },
   collectionText: {
     fontSize: 20,
-    textAlign: "center"
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "#fff"
+  },
+  buttonPressed: {
+    opacity: 0.7
   }
 });
 
