@@ -68,3 +68,21 @@ npm install react-native-paper
 npm install native-base
 npx expo install react-native-svg@12.1.1
 npx expo install react-native-safe-area-context@3.3.2
+```
+## **Run Local**
+
+*Make sure you have completed the installation steps above before proceeding.*
+
+1. To start the app locally, run the following command:
+   ```bash
+   npx expo start
+
+After running the command, Expo will provide:
+
+2. A local host URL (not recommended for use since the app is designed for mobile devices).
+A QR code, which can be scanned using the Expo Go app.
+3. To use the app on your mobile device:
+
+Download the Expo Go app from the App Store or Google Play Store.
+Open Expo Go and scan the QR code that appears in your terminal after running the npx expo start command.
+This will launch the app on your mobile device, allowing you to test and use the app as intended.
