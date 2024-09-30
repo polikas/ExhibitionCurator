@@ -11,7 +11,8 @@ The app is built using the following tech stack:
 
 ## **Where to Find the Application**
 
-The app is published and hosted on **Expo Go's** servers, and can be accessed using the Expo Go app. Users can download the Expo Go app from the Play Store, scan the QR code, and load the app on their mobile devices.
+The app is published and hosted on **Expo Go's** servers, and can be accessed using the Expo Go app. Users can download the Expo Go app from the Play Store, scan the [QR code](https://qr.expo.dev/eas-update?slug=exp&projectId=8a44ca08-0fb5-4e30-b62b-7b0dabf51567&groupId=7ae2dbb9-2d9d-4a91-9053-d9c9e081f64b&host=u.expo.dev)
+, and load the app on their mobile devices.
 
 ## **How to Use**
 
