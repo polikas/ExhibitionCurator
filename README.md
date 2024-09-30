@@ -9,6 +9,8 @@ The app is built using the following tech stack:
 - **React Native Paper**: For UI components and design elements.
 - **Jest**: For implementing integration tests of the API interactions.
 
+## **Where to Find the Application**
+
 The app is published and hosted on **Expo Go's** servers, and can be accessed using the Expo Go app. Users can download the Expo Go app from the Play Store, scan the QR code, and load the app on their mobile devices.
 
 ## **How to Use**
