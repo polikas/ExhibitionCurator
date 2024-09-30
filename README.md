@@ -40,6 +40,22 @@ As a user, you can follow these steps to use the app:
 
 
 
-Install Guide
+## **Install Guide - Local**
 
-Run Local
+To run the app locally, follow the steps below:
+
+### **Prerequisites**
+
+- Ensure you have **Node.js** installed with a minimum version of **v16.20.2**.
+
+### **Installation Steps**
+
+1. Clone the repository to your local machine.
+2. Navigate to the project directory in your terminal.
+
+3. Run the following command to install the project dependencies:
+   ```bash
+   npm install
+
+
+
