@@ -56,6 +56,19 @@ To run the app locally, follow the steps below:
 3. Run the following command to install the project dependencies:
    ```bash
    npm install
+it will install the following depedencies/packages
+```bash
+npx expo install react-dom react-native-web @expo/metro-runtime
+npm install axios
+npm install axios-mock-adapter --save-dev
+npm install --save-dev jest
+npm install @react-navigation/native @react-navigation/stack
+npm install react-native-screens react-native-safe-area-context
+npm install react-native-paper
+npm install native-base
+npx expo install react-native-svg@12.1.1
+npx expo install react-native-safe-area-context@3.3.2
+
 
 
 
